@@ -19,8 +19,8 @@ source ${GITHUB_WORKSPACE}/immortalwrt/function.sh
 # 修改x86内核到6.6版
 # sed -i 's/KERNEL_PATCHVER:=.*/KERNEL_PATCHVER:=6.6/g' ./target/linux/x86/Makefile
 
-# 默认IP由1.1修改为0.1
-# sed -i 's/192.168.1.1/192.168.0.1/g' package/base-files/files/bin/config_generate
+# Modify default IP（FROM 192.168.1.1 CHANGE TO 192.168.31.4）
+sed -i 's/192.168.1.1/192.168.5.1/g' package/base-files/files/bin/config_generate
 
 # 最大连接数修改为65535
 sed -i '/customized in this file/a net.netfilter.nf_conntrack_max=65535' package/base-files/files/etc/sysctl.conf
@@ -41,40 +41,40 @@ rm -rf package/passwall-packages/{chinadns-ng,naiveproxy,shadowsocks-rust,v2ray-
 merge_package v5 https://github.com/sbwml/openwrt_helloworld package/passwall-packages chinadns-ng naiveproxy shadowsocks-rust v2ray-geodata
 # app
 rm -rf feeds/luci/applications/{luci-app-passwall,luci-app-ssr-libev-server}
-git clone -b luci-smartdns-dev --single-branch https://github.com/lwb1978/openwrt-passwall package/passwall-luci
-# git clone https://github.com/xiaorouji/openwrt-passwall package/passwall-luci
+# git clone -b luci-smartdns-dev --single-branch https://github.com/lwb1978/openwrt-passwall package/passwall-luci
+git clone https://github.com/xiaorouji/openwrt-passwall package/passwall-luci
 # ------------------------------------------------------------
 
 # 优化socat中英翻译
-sed -i 's/仅IPv6/仅 IPv6/g' package/feeds/luci/luci-app-socat/po/zh_Hans/socat.po
+# sed -i 's/仅IPv6/仅 IPv6/g' package/feeds/luci/luci-app-socat/po/zh_Hans/socat.po
 
 # SmartDNS
-rm -rf feeds/luci/applications/luci-app-smartdns
-git clone --single-branch https://github.com/lwb1978/luci-app-smartdns package/luci-app-smartdns
+# rm -rf feeds/luci/applications/luci-app-smartdns
+# git clone --single-branch https://github.com/lwb1978/luci-app-smartdns package/luci-app-smartdns
 # 替换immortalwrt 软件仓库smartdns版本为官方最新版
-rm -rf feeds/packages/net/smartdns
-cp -rf ${GITHUB_WORKSPACE}/patch/smartdns feeds/packages/net
+# rm -rf feeds/packages/net/smartdns
+# cp -rf ${GITHUB_WORKSPACE}/patch/smartdns feeds/packages/net
 
 # 替换udpxy为修改版，解决组播源数据有重复数据包导致的花屏和马赛克问题
-rm -rf feeds/packages/net/udpxy/Makefile
-cp -rf ${GITHUB_WORKSPACE}/patch/udpxy/Makefile feeds/packages/net/udpxy/
+# rm -rf feeds/packages/net/udpxy/Makefile
+# cp -rf ${GITHUB_WORKSPACE}/patch/udpxy/Makefile feeds/packages/net/udpxy/
 # 修改 udpxy 菜单名称为大写
 # sed -i 's#\"title\": \"udpxy\"#\"title\": \"UDPXY\"#g' feeds/luci/applications/luci-app-udpxy/root/usr/share/luci/menu.d/luci-app-udpxy.json
 # 修复 immortalwrt udpxy luci 汉化错误
-rm -rf feeds/luci/applications/luci-app-udpxy/po
-cp -rf ${GITHUB_WORKSPACE}/patch/luci-app-udpxy/po feeds/luci/applications/luci-app-udpxy/po
+# rm -rf feeds/luci/applications/luci-app-udpxy/po
+# cp -rf ${GITHUB_WORKSPACE}/patch/luci-app-udpxy/po feeds/luci/applications/luci-app-udpxy/po
 
 # lukcy大吉
-git clone https://github.com/sirpdboy/luci-app-lucky package/lucky-packages
+# git clone https://github.com/sirpdboy/luci-app-lucky package/lucky-packages
 
 # 集客AC控制器
-git clone -b v1.0 https://github.com/lwb1978/openwrt-gecoosac package/openwrt-gecoosac
+# git clone -b v1.0 https://github.com/lwb1978/openwrt-gecoosac package/openwrt-gecoosac
 
 # 添加主题
-rm -rf feeds/luci/themes/luci-theme-argon
-git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon package/luci-theme-argon
+# rm -rf feeds/luci/themes/luci-theme-argon
+# git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon package/luci-theme-argon
 # merge_package main https://github.com/sbwml/luci-theme-argon feeds/luci/themes luci-theme-argon
-git clone --depth=1 -b js https://github.com/lwb1978/luci-theme-kucat package/luci-theme-kucat
+# git clone --depth=1 -b js https://github.com/lwb1978/luci-theme-kucat package/luci-theme-kucat
 
 # unzip
 rm -rf feeds/packages/utils/unzip
@@ -89,8 +89,8 @@ rm -rf package/network/services/ppp
 git clone https://github.com/sbwml/package_network_services_ppp package/network/services/ppp
 
 # TTYD设置
-sed -i 's/procd_set_param stdout 1/procd_set_param stdout 0/g' feeds/packages/utils/ttyd/files/ttyd.init
-sed -i 's/procd_set_param stderr 1/procd_set_param stderr 0/g' feeds/packages/utils/ttyd/files/ttyd.init
+# sed -i 's/procd_set_param stdout 1/procd_set_param stdout 0/g' feeds/packages/utils/ttyd/files/ttyd.init
+# sed -i 's/procd_set_param stderr 1/procd_set_param stderr 0/g' feeds/packages/utils/ttyd/files/ttyd.init
 
 # openssl 3.2
 # rm -rf package/libs/openssl
@@ -189,8 +189,8 @@ find package/*/ -maxdepth 2 -path "*/Makefile" | xargs -i sed -i 's/PKG_SOURCE_U
 find package/*/ -maxdepth 2 -path "*/Makefile" | xargs -i sed -i 's/PKG_SOURCE_URL:=@GHCODELOAD/PKG_SOURCE_URL:=https:\/\/codeload.github.com/g' {}
 
 # 自定义默认配置
-sed -i '/exit 0$/d' package/emortal/default-settings/files/99-default-settings
-cat ${GITHUB_WORKSPACE}/immortalwrt/default-settings >> package/emortal/default-settings/files/99-default-settings
+# sed -i '/exit 0$/d' package/emortal/default-settings/files/99-default-settings
+# cat ${GITHUB_WORKSPACE}/immortalwrt/default-settings >> package/emortal/default-settings/files/99-default-settings
 
 # 拷贝自定义文件
 if [ -n "$(ls -A "${GITHUB_WORKSPACE}/immortalwrt/diy" 2>/dev/null)" ]; then
@@ -202,4 +202,3 @@ fi
 
 echo "========================="
 echo " DIY2 配置完成……"
-
