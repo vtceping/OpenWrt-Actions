@@ -41,19 +41,19 @@ rm -rf package/passwall-packages/{chinadns-ng,naiveproxy,shadowsocks-rust,v2ray-
 merge_package v5 https://github.com/sbwml/openwrt_helloworld package/passwall-packages chinadns-ng naiveproxy shadowsocks-rust v2ray-geodata
 # app
 rm -rf feeds/luci/applications/{luci-app-passwall,luci-app-ssr-libev-server}
-# git clone -b luci-smartdns-dev --single-branch https://github.com/lwb1978/openwrt-passwall package/passwall-luci
-git clone https://github.com/xiaorouji/openwrt-passwall package/passwall-luci
+git clone -b luci-smartdns-dev --single-branch https://github.com/lwb1978/openwrt-passwall package/passwall-luci
+# git clone https://github.com/xiaorouji/openwrt-passwall package/passwall-luci
 # ------------------------------------------------------------
 
 # 优化socat中英翻译
 sed -i 's/仅IPv6/仅 IPv6/g' package/feeds/luci/luci-app-socat/po/zh_Hans/socat.po
 
 # SmartDNS
-# rm -rf feeds/luci/applications/luci-app-smartdns
-# git clone --single-branch https://github.com/lwb1978/luci-app-smartdns package/luci-app-smartdns
+rm -rf feeds/luci/applications/luci-app-smartdns
+git clone --single-branch https://github.com/lwb1978/luci-app-smartdns package/luci-app-smartdns
 # 替换immortalwrt 软件仓库smartdns版本为官方最新版
-# rm -rf feeds/packages/net/smartdns
-# cp -rf ${GITHUB_WORKSPACE}/patch/smartdns feeds/packages/net
+rm -rf feeds/packages/net/smartdns
+cp -rf ${GITHUB_WORKSPACE}/patch/smartdns feeds/packages/net
 
 # 替换udpxy为修改版，解决组播源数据有重复数据包导致的花屏和马赛克问题
 rm -rf feeds/packages/net/udpxy/Makefile
