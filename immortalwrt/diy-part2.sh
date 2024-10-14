@@ -40,7 +40,7 @@ sed -i 's#top -n1#\/bin\/busybox top -n1#g' feeds/luci/modules/luci-base/root/us
 # ------------------------------------------------------------
 
 # 优化socat中英翻译
-sed -i 's/仅IPv6/仅 IPv6/g' package/feeds/luci/luci-app-socat/po/zh_Hans/socat.po
+# sed -i 's/仅IPv6/仅 IPv6/g' package/feeds/luci/luci-app-socat/po/zh_Hans/socat.po
 
 # SmartDNS
 # rm -rf feeds/luci/applications/luci-app-smartdns
@@ -65,9 +65,9 @@ sed -i 's/仅IPv6/仅 IPv6/g' package/feeds/luci/luci-app-socat/po/zh_Hans/socat
 # git clone -b v1.0 https://github.com/lwb1978/openwrt-gecoosac package/openwrt-gecoosac
 
 # 添加主题
-rm -rf feeds/luci/themes/luci-theme-argon
-git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon package/luci-theme-argon
-merge_package main https://github.com/sbwml/luci-theme-argon feeds/luci/themes luci-theme-argon
+# rm -rf feeds/luci/themes/luci-theme-argon
+# git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon package/luci-theme-argon
+# merge_package main https://github.com/sbwml/luci-theme-argon feeds/luci/themes luci-theme-argon
 # git clone --depth=1 -b js https://github.com/lwb1978/luci-theme-kucat package/luci-theme-kucat
 
 # unzip
@@ -98,14 +98,24 @@ sed -i 's/procd_set_param stderr 1/procd_set_param stderr 0/g' feeds/packages/ut
 # rm -rf feeds/packages/net/curl
 # git clone https://github.com/sbwml/feeds_packages_net_curl feeds/packages/net/curl
 
+# 替换curl修改版（无nghttp3、ngtcp2）
+curl_ver=$(cat feeds/packages/net/curl/Makefile | grep -i "PKG_VERSION:=" | awk 'BEGIN{FS="="};{print $2}')
+[ $(check_ver "$curl_ver" "8.9.1") != 0 ] && {
+	echo "替换curl版本"
+	rm -rf feeds/packages/net/curl
+	cp -rf ${GITHUB_WORKSPACE}/patch/curl feeds/packages/net/curl
+}
+
+mirror=raw.githubusercontent.com/sbwml/r4s_build_script/master
+
 # 精简 UPnP 菜单名称
-# sed -i 's#\"title\": \"UPnP IGD \& PCP/NAT-PMP\"#\"title\": \"UPnP\"#g' feeds/luci/applications/luci-app-upnp/root/usr/share/luci/menu.d/luci-app-upnp.json
+sed -i 's#\"title\": \"UPnP IGD \& PCP/NAT-PMP\"#\"title\": \"UPnP\"#g' feeds/luci/applications/luci-app-upnp/root/usr/share/luci/menu.d/luci-app-upnp.json
 # 移动 UPnP 到 “网络” 子菜单
 # sed -i 's/services/network/g' feeds/luci/applications/luci-app-upnp/root/usr/share/luci/menu.d/luci-app-upnp.json
 
 # rpcd - fix timeout
-# sed -i 's/option timeout 30/option timeout 60/g' package/system/rpcd/files/rpcd.config
-# sed -i 's#20) \* 1000#60) \* 1000#g' feeds/luci/modules/luci-base/htdocs/luci-static/resources/rpc.js
+sed -i 's/option timeout 30/option timeout 60/g' package/system/rpcd/files/rpcd.config
+sed -i 's#20) \* 1000#60) \* 1000#g' feeds/luci/modules/luci-base/htdocs/luci-static/resources/rpc.js
 
 # 修复编译时提示 freeswitch 缺少 libpcre 依赖
 sed -i 's/+libpcre \\$/+libpcre2 \\/g' package/feeds/telephony/freeswitch/Makefile
